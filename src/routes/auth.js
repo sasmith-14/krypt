@@ -1,7 +1,8 @@
 const express = require('express');
 const User = require('../models/user.model');
 const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken')
+const jwt = require('jsonwebtoken');
+const authMiddleware = require('../middleware/auth.middleware');
 const router = express.Router();
 
 router.post('/register', async (req, res) => {
@@ -54,7 +55,11 @@ router.post('/login', async (req, res) => {
                 { id: currentUser._id },
                 process.env.JWT_SECRET,
             )
-            return res.status(200).json({ token })
+            return res.status(200).json({ 
+                token,
+                userId: currentUser._id,
+                username: currentUser.username
+            })
         }
         else {
             return res.status(401).json({
@@ -67,5 +72,14 @@ router.post('/login', async (req, res) => {
         })
     }
 })
+
+router.get('/users', authMiddleware, async (req, res) => {
+    try {
+        const users = await User.find({ _id: { $ne: req.user.id } }).select('_id username');
+        return res.status(200).json({ users });
+    } catch (error) {
+        return res.status(500).json({ message: 'Something went wrong' });
+    }
+});
 
 module.exports = router;

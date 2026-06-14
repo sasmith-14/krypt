@@ -1,5 +1,5 @@
 const express = require("express");
-const authMiddleware = require('../middleware/auth.js');
+const authMiddleware = require('../middleware/auth.middleware.js');
 const Message = require('../models/message.model.js');
 
 const router = express.Router();
@@ -8,9 +8,9 @@ router.post('/send', authMiddleware, async (req, res) => {
 
     try {
         const sender = req.user.id;
-        const { reciever, message } = req.body;
+        const { receiver, message } = req.body;
 
-        if (!reciever || !message) {
+        if (!receiver || !message) {
             return res.status(400).json({
                 message: "All fields are required",
             })
@@ -18,7 +18,7 @@ router.post('/send', authMiddleware, async (req, res) => {
 
         const newMessage = await Message.create({
             sender,
-            reciever,
+            receiver,
             text: message
         })
 
@@ -40,8 +40,8 @@ router.get('/:userId', authMiddleware, async (req, res) => {
         const otherUserId = req.params.userId;
         const messages = await Message.find({
             $or: [
-                { sender: myId, reciever: otherUserId },
-                { sender: otherUserId, reciever: myId }
+                { sender: myId, receiver: otherUserId },
+                { sender: otherUserId, receiver: myId }
             ]
         })
         return res.status(200).json({ messages })
