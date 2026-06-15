@@ -17,7 +17,12 @@ const KEY_LENGTH  = 256;
 // ── Helpers ──────────────────────────────────────────────
 function str2buf(str)  { return new TextEncoder().encode(str); }
 function buf2str(buf)  { return new TextDecoder().decode(buf); }
-function buf2b64(buf)  { return btoa(String.fromCharCode(...new Uint8Array(buf))); }
+function buf2b64(buf) {
+  const bytes = new Uint8Array(buf);
+  let bin = '';
+  for (let i = 0; i < bytes.length; i++) bin += String.fromCharCode(bytes[i]);
+  return btoa(bin);
+}
 function b642buf(b64)  {
   const bin = atob(b64);
   const buf = new Uint8Array(bin.length);

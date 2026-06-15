@@ -13,10 +13,15 @@ router.post('/register', async (req, res) => {
                 message: "All fields are required",
             })
         }
-        const existingUser = await User.findOne({ email });
+        if (password.length < 6) {
+            return res.status(400).json({
+                message: "Password must be at least 6 characters",
+            })
+        }
+        const existingUser = await User.findOne({ $or: [{ email }, { username }] });
         if (existingUser) {
             return res.status(400).json({
-                message: "User already exists",
+                message: "Username or email already exists",
             })
         }
         const hashedPassword = await bcrypt.hash(password, 10);
@@ -54,6 +59,7 @@ router.post('/login', async (req, res) => {
             const token = jwt.sign(
                 { id: currentUser._id },
                 process.env.JWT_SECRET,
+                { expiresIn: '7d' }
             )
             return res.status(200).json({ 
                 token,

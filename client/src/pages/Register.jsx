@@ -19,7 +19,7 @@ export default function Register() {
     e.preventDefault();
     const { username, email, password } = form;
 
-    if (!username.trim() || !email.trim() || !password.trim()) {
+    if (!username.trim() || !email.trim() || !password) {
       setError('All fields are required.');
       return;
     }

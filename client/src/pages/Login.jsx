@@ -17,7 +17,7 @@ export default function Login() {
   async function handleSubmit(e) {
     e.preventDefault();
     const { email, password } = form;
-    if (!email.trim() || !password.trim()) {
+    if (!email.trim() || !password) {
       setError('Both fields are required.');
       return;
     }

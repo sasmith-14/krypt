@@ -62,10 +62,19 @@ export default function Chat() {
   useEffect(() => {
     socket.connect();
 
+    function onConnect() {
+      socket.emit('register', myId);
+    }
+
+    socket.on('connect', onConnect);
     socket.on('onlineUsers', (ids) => setOnlineIds(new Set(ids)));
-    socket.emit('register', myId);   // tell server who we are
+    
+    if (socket.connected) {
+      onConnect();
+    }
 
     return () => {
+      socket.off('connect', onConnect);
       socket.off('onlineUsers');
       socket.disconnect();
     };
