@@ -1,8 +1,4 @@
-/**
- * KryptLogo — reusable logo icon component.
- * Renders the dark rounded square with white "k" to match the brand asset.
- * Pass `size` in px (default 32).
- */
+
 export default function KryptLogo({ size = 32 }) {
   return (
     <img

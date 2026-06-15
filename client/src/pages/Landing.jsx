@@ -4,7 +4,7 @@ import KryptLogo from '../components/KryptLogo';
 export default function Landing() {
   return (
     <div className="landing">
-      {/* Nav */}
+
       <nav className="landing-nav">
         <Link to="/" className="landing-nav-logo">
           <KryptLogo size={32} />
@@ -20,7 +20,6 @@ export default function Landing() {
         </div>
       </nav>
 
-      {/* Hero */}
       <main className="landing-hero">
         <div className="hero-glow" aria-hidden="true" />
 

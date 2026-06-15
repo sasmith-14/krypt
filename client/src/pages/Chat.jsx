@@ -5,7 +5,6 @@ import socket from '../socket/socket';
 import { deriveKey, encrypt, decrypt } from '../crypto/encryption';
 import KryptLogo from '../components/KryptLogo';
 
-// ── Helpers ──────────────────────────────────────────────────────────────────
 function getRoomId(a, b) {
   return [a, b].sort().join('_');
 }
@@ -22,43 +21,36 @@ function formatTime(dateStr) {
   }
 }
 
-// ── Main Component ────────────────────────────────────────────────────────────
 export default function Chat() {
   const navigate = useNavigate();
 
-  // Current user from localStorage
   const myId       = localStorage.getItem('userId');
   const myUsername = localStorage.getItem('username') || 'Me';
 
-  // State
   const [users, setUsers]               = useState([]);
-  const [activeUser, setActiveUser]     = useState(null);       // { _id, username }
-  const [messages, setMessages]         = useState([]);          // decrypted display messages
+  const [activeUser, setActiveUser]     = useState(null);
+  const [messages, setMessages]         = useState([]);
   const [inputText, setInputText]       = useState('');
   const [sending, setSending]           = useState(false);
   const [loadingUsers, setLoadingUsers] = useState(true);
   const [loadingMsgs, setLoadingMsgs]   = useState(false);
-  const [cryptoKey, setCryptoKey]       = useState(null);        // derived AES key
+  const [cryptoKey, setCryptoKey]       = useState(null);
   const [onlineIds, setOnlineIds]       = useState(new Set());
 
   const messagesEndRef = useRef(null);
   const textareaRef    = useRef(null);
 
-  // ── Fetch users list ────────────────────────────────────────────────────────
   useEffect(() => {
     (async () => {
       try {
         const { data } = await api.get('/auth/users');
         setUsers(data.users || []);
-      } catch {
-        /* handled by interceptor */
-      } finally {
+      } catch  finally {
         setLoadingUsers(false);
       }
     })();
   }, []);
 
-  // ── Socket: connect & track online ─────────────────────────────────────────
   useEffect(() => {
     socket.connect();
 
@@ -68,7 +60,7 @@ export default function Chat() {
 
     socket.on('connect', onConnect);
     socket.on('onlineUsers', (ids) => setOnlineIds(new Set(ids)));
-    
+
     if (socket.connected) {
       onConnect();
     }
@@ -80,7 +72,6 @@ export default function Chat() {
     };
   }, [myId]);
 
-  // ── Derive shared AES key whenever active conversation changes ──────────────
   useEffect(() => {
     if (!activeUser) return;
     let cancelled = false;
@@ -91,7 +82,6 @@ export default function Chat() {
     return () => { cancelled = true; };
   }, [activeUser, myId]);
 
-  // ── Load conversation history ───────────────────────────────────────────────
   const loadMessages = useCallback(async (user, key) => {
     setLoadingMsgs(true);
     setMessages([]);
@@ -99,7 +89,6 @@ export default function Chat() {
       const { data } = await api.get(`/messages/${user._id}`);
       const rawMsgs  = data.messages || [];
 
-      // Decrypt all messages in parallel
       const decrypted = await Promise.all(
         rawMsgs.map(async (msg) => {
           try {
@@ -119,11 +108,9 @@ export default function Chat() {
     }
   }, []);
 
-  // ── Open conversation ───────────────────────────────────────────────────────
   async function openConversation(user) {
     if (activeUser?._id === user._id) return;
 
-    // Leave old room
     if (activeUser) {
       socket.emit('leaveRoom', getRoomId(myId, activeUser._id));
       socket.off('receiveMessage');
@@ -133,7 +120,6 @@ export default function Chat() {
     setMessages([]);
     setCryptoKey(null);
 
-    // Derive key first, then load history
     const key    = await deriveKey(myId, user._id);
     const roomId = getRoomId(myId, user._id);
 
@@ -142,9 +128,8 @@ export default function Chat() {
 
     socket.emit('joinRoom', roomId);
 
-    // Real-time incoming messages
     socket.on('receiveMessage', async (data) => {
-      if (data.sender === myId) return; // don't double-add sent messages
+      if (data.sender === myId) return;
       try {
         const text = await decrypt(data.text, key);
         setMessages((prev) => [
@@ -170,12 +155,10 @@ export default function Chat() {
     });
   }
 
-  // ── Scroll to bottom on new messages ───────────────────────────────────────
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
-  // ── Send message ────────────────────────────────────────────────────────────
   async function handleSend() {
     const text = inputText.trim();
     if (!text || !activeUser || !cryptoKey || sending) return;
@@ -188,7 +171,6 @@ export default function Chat() {
     try {
       const ciphertext = await encrypt(text, cryptoKey);
 
-      // Optimistically add to local state immediately
       const optimistic = {
         _id:    `opt-${Date.now()}`,
         sender: myId,
@@ -197,10 +179,8 @@ export default function Chat() {
       };
       setMessages((prev) => [...prev, optimistic]);
 
-      // Persist to DB (encrypted)
       await api.post('/messages/send', { receiver: activeUser._id, message: ciphertext });
 
-      // Broadcast via socket (encrypted)
       socket.emit('sendMessage', {
         roomId,
         text:     ciphertext,
@@ -215,7 +195,6 @@ export default function Chat() {
     }
   }
 
-  // ── Keyboard: Enter to send, Shift+Enter for newline ───────────────────────
   function handleKeyDown(e) {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
@@ -223,20 +202,17 @@ export default function Chat() {
     }
   }
 
-  // ── Logout ──────────────────────────────────────────────────────────────────
   function handleLogout() {
     socket.disconnect();
     localStorage.clear();
     navigate('/');
   }
 
-  // ── Render ──────────────────────────────────────────────────────────────────
   return (
     <div className="chat-layout">
 
-      {/* ── SIDEBAR ─────────────────────────────────────────────── */}
       <aside className="sidebar">
-        {/* Logo + logout */}
+
         <div className="sidebar-header">
           <div className="sidebar-logo">
             <KryptLogo size={30} />
@@ -257,7 +233,6 @@ export default function Chat() {
           </button>
         </div>
 
-        {/* Current user chip */}
         <div className="sidebar-me">
           <div className="avatar sm">{getInitials(myUsername)}</div>
           <div className="sidebar-me-info">
@@ -268,7 +243,6 @@ export default function Chat() {
 
         <div className="sidebar-section-label">Direct messages</div>
 
-        {/* Users list */}
         <div className="sidebar-users" role="list">
           {loadingUsers ? (
             <div className="sidebar-empty">
@@ -307,10 +281,9 @@ export default function Chat() {
         </div>
       </aside>
 
-      {/* ── CHAT PANEL ──────────────────────────────────────────── */}
       <main className="chat-panel">
         {!activeUser ? (
-          /* Empty state */
+
           <div className="chat-empty">
             <div className="chat-empty-icon">💬</div>
             <h3>Select a conversation</h3>
@@ -318,7 +291,7 @@ export default function Chat() {
           </div>
         ) : (
           <>
-            {/* Header */}
+
             <div className="chat-header">
               <div className="avatar lg">{getInitials(activeUser.username)}</div>
               <div className="chat-header-info">
@@ -330,7 +303,6 @@ export default function Chat() {
               </div>
             </div>
 
-            {/* Messages */}
             <div className="messages-area" role="log" aria-live="polite" aria-label="Messages">
               {loadingMsgs ? (
                 <div className="chat-loading">
@@ -367,7 +339,6 @@ export default function Chat() {
               <div ref={messagesEndRef} aria-hidden="true" />
             </div>
 
-            {/* Input bar */}
             <div className="input-bar">
               <textarea
                 ref={textareaRef}

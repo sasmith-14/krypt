@@ -1,7 +1,6 @@
-/* ── Google Fonts ── */
+
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
-/* ── Reset & Base ── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
@@ -53,15 +52,12 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* ── Scrollbars ── */
 ::-webkit-scrollbar { width: 4px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: var(--text-muted); border-radius: 4px; }
 
-/* ── Utility ── */
 .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); }
 
-/* ── Buttons ── */
 .btn {
   display: inline-flex;
   align-items: center;
@@ -110,7 +106,6 @@ body {
   background: var(--accent-glow);
 }
 
-/* ── Forms ── */
 .form-group { display: flex; flex-direction: column; gap: 6px; }
 .form-label { font-size: 0.82rem; font-weight: 500; color: var(--text-secondary); letter-spacing: 0.03em; }
 
@@ -132,7 +127,6 @@ body {
   box-shadow: 0 0 0 3px rgba(139,92,246,0.15);
 }
 
-/* ── Error / Alert ── */
 .alert {
   padding: 10px 14px;
   border-radius: var(--radius-md);
@@ -150,7 +144,6 @@ body {
   color: var(--success);
 }
 
-/* ── Spinner ── */
 .spinner {
   display: inline-block;
   width: 16px; height: 16px;
@@ -161,7 +154,6 @@ body {
 }
 @keyframes spin { to { transform: rotate(360deg); } }
 
-/* ── Auth card ── */
 .auth-page {
   min-height: 100vh;
   display: flex;
@@ -218,7 +210,6 @@ body {
 .auth-footer a { color: var(--accent-light); text-decoration: none; font-weight: 500; }
 .auth-footer a:hover { text-decoration: underline; }
 
-/* ── Animations ── */
 @keyframes fadeUp {
   from { opacity: 0; transform: translateY(18px); }
   to   { opacity: 1; transform: translateY(0); }
@@ -236,7 +227,6 @@ body {
   100% { opacity: 1; transform: scale(1) translateY(0); }
 }
 
-/* ── Landing Page ── */
 .landing {
   min-height: 100vh;
   display: flex;
@@ -379,7 +369,6 @@ body {
   color: var(--text-muted);
 }
 
-/* ── Chat Layout ── */
 .chat-layout {
   display: flex;
   height: 100vh;
@@ -387,7 +376,6 @@ body {
   overflow: hidden;
 }
 
-/* ── Sidebar ── */
 .sidebar {
   width: 300px;
   flex-shrink: 0;
@@ -506,7 +494,6 @@ body {
 
 .sidebar-empty { padding: 28px 16px; text-align: center; color: var(--text-muted); font-size: 0.84rem; }
 
-/* ── Chat Panel ── */
 .chat-panel {
   flex: 1;
   display: flex;
@@ -536,7 +523,6 @@ body {
 }
 .chat-header-enc-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--success); }
 
-/* ── Messages ── */
 .messages-area {
   flex: 1;
   overflow-y: auto;
@@ -608,7 +594,6 @@ body {
   gap: 5px;
 }
 
-/* ── No conversation selected ── */
 .chat-empty {
   flex: 1;
   display: flex;
@@ -628,7 +613,6 @@ body {
 .chat-empty h3 { font-size: 1.05rem; font-weight: 600; color: var(--text-secondary); }
 .chat-empty p { font-size: 0.84rem; max-width: 260px; line-height: 1.6; }
 
-/* ── Input Bar ── */
 .input-bar {
   padding: 14px 20px;
   border-top: 1px solid var(--border);
@@ -681,7 +665,6 @@ body {
 }
 .send-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
 
-/* ── Loading overlay ── */
 .chat-loading {
   flex: 1;
   display: flex;
@@ -692,7 +675,6 @@ body {
   font-size: 0.9rem;
 }
 
-/* ── Responsive ── */
 @media (max-width: 640px) {
   .sidebar { width: 76px; }
   .sidebar-logo-text,

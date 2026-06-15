@@ -4,7 +4,6 @@ const api = axios.create({
   baseURL: 'http://localhost:3000/api',
 });
 
-// Auto-attach JWT to every request
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem('token');
   if (token) {
@@ -13,7 +12,6 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
-// Auto-clear auth on 401 responses
 api.interceptors.response.use(
   (res) => res,
   (err) => {
