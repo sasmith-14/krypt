@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <rect width="200" height="200" rx="44" ry="44" fill="#141414"/>
+  <text
+    x="100"
+    y="142"
+    font-family="'Inter', 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif"
+    font-size="115"
+    font-weight="600"
+    fill="#f0f0f0"
+    text-anchor="middle"
+    dominant-baseline="auto"
+    letter-spacing="-4"
+  >k</text>
+</svg>
